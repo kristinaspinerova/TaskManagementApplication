@@ -81,6 +81,33 @@ app.get('/tasks', async (req, res) => {
   res.json(tasks)
 })
 
+app.delete('/task/:id', async (req, res) => {
+  const { id } = req.params
+  const task = await prisma.task.delete({
+    where: {
+      id: Number(id),
+    },
+  })
+  res.json(task)
+})
+
+app.put('/task/:id/status/:st', async (req, res) => {
+  const { id,st } = req.params
+
+  try {
+    const task = await prisma.task.update({
+      where: { id: Number(id) },
+      data: {
+        status: Number(st),
+      },
+    })
+
+    res.json(task)
+  } catch (error) {
+    res.json({ "error": `Task with ID ${id} does not exist in the database` })
+  }
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
