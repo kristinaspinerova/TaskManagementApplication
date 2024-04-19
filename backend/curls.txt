@@ -1,0 +1,4 @@
+curl -d '{ "name" : "Creator" }' -H 'Content-Type: application/json' -X POST localhost/role
+curl -d '{ "name" : "Meno", "surname" : "Priezvisko", "email" : "aaa@aaa.com", "roleId" : 1 }' -H 'Content-Type: application/json' -X POST localhost/user
+curl -d '{ "name" : "ZoznamTaskov", "description" : "popisok", "creationDate" : "2024-04-19T20:20:15Z", "userId" : 1 }' -H 'Content-Type: application/json' -X POST localhost/tasklist
+curl -d '{ "name" : "Uloha", "description" : "popisok", "due" : "2024-04-19T20:20:15Z", "priority" : 5 , "status" : 3 }' -H 'Content-Type: application/json' -X POST localhost/task
