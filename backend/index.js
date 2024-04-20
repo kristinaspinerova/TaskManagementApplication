@@ -62,15 +62,30 @@ app.get('/tasklists', async (req, res) => {
   res.json(tasklists)
 })
 
+app.get('/tasklists/:id', async (req, res) => {
+  const { id } = req.params
+
+  const taskList = await prisma.taskList.findUnique({
+    where: { id: Number(id) },
+  })
+
+  const tasks = await prisma.task.findMany({
+    where: { taskListId: Number(id) },
+  })
+  taskList["tasks"] = tasks
+  res.json(taskList)
+})
+
 app.post(`/task`, async (req, res) => {
-  const { name, description, due, priority, status } = req.body
+  const { name, description, due, priority, status, taskListId } = req.body
   const result = await prisma.task.create({
     data: {
       name,
       description,
       due,
       priority,
-      status
+      status,
+      taskListId
     },
   })
   res.json(result)

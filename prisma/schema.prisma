@@ -14,6 +14,8 @@ model Task {
   due         DateTime
   priority    Int
   status      Int
+  tasklist    TaskList @relation(fields: [taskListId], references: [id])
+  taskListId  Int
 }
 
 model User {
@@ -39,4 +41,5 @@ model TaskList {
   creator      User     @relation(references: [id], fields: [userId])
   creationDate DateTime
   userId       Int
+  Task         Task[]
 }
