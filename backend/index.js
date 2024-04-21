@@ -7,43 +7,6 @@ const app = express()
 app.use(express.json())
 const port = 80
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-app.post(`/role`, async (req, res) => {
-  const { name } = req.body
-  const result = await prisma.role.create({
-    data: {
-      name
-    },
-  })
-  res.json(result)
-})
-
-app.get('/roles', async (req, res) => {
-  const roles = await prisma.role.findMany()
-  res.json(roles)
-})
-
-app.post(`/user`, async (req, res) => {
-  const { name, surname, email, roleId } = req.body
-  const result = await prisma.user.create({
-    data: {
-      name,
-      surname,
-      email,
-      roleId
-    },
-  })
-  res.json(result)
-})
-
-app.get('/users', async (req, res) => {
-  const users = await prisma.user.findMany()
-  res.json(users)
-})
-
 async function createTaskList(dtoIn){
   try{
     const { name, description, creationDate, userId } = dtoIn
@@ -78,70 +41,73 @@ app.post(`/tasklist`, async (req, res) => {
   res.json(dtoOut)
 })
 
-app.get('/tasklists', async (req, res) => {
-  const tasklists = await prisma.taskList.findMany()
-  res.json(tasklists)
-})
+async function readTaskList(dtoIn){
+  try{
+    const { id } = dtoIn
+    if (!id||id.length==0){
+      throw new Error("wrong id")
+    }
+    const taskList = await prisma.taskList.findUnique({
+      where: { id: Number(id) },
+    })
+  
+    const tasks = await prisma.task.findMany({
+      where: { taskListId: Number(id) },
+    })
+    taskList["tasks"] = tasks
+    return taskList
+  } catch(e){
+    return {"error": e}
+  }
+}
 
 app.get('/tasklists/:id', async (req, res) => {
-  const { id } = req.params
-
-  const taskList = await prisma.taskList.findUnique({
-    where: { id: Number(id) },
-  })
-
-  const tasks = await prisma.task.findMany({
-    where: { taskListId: Number(id) },
-  })
-  taskList["tasks"] = tasks
-  res.json(taskList)
+  const dtoOut = await readTaskList(req.params)
+  res.json(dtoOut)
 })
 
-app.post(`/task`, async (req, res) => {
-  const { name, description, due, priority, status, taskListId } = req.body
-  const result = await prisma.task.create({
-    data: {
-      name,
-      description,
-      due,
-      priority,
-      status,
-      taskListId
-    },
-  })
-  res.json(result)
-})
-
-app.get('/tasks', async (req, res) => {
-  const tasks = await prisma.task.findMany()
-  res.json(tasks)
-})
-
+async function deleteTask(dtoIn){
+  try{
+    const { id } = dtoIn
+    if (!id||id.length==0){
+      throw new Error("wrong id")
+    }
+    const task = await prisma.task.delete({
+      where: {
+        id: Number(id),
+      },
+    })
+    return task
+  } catch(e){
+    return {"error": e}
+  }
+}
 app.delete('/task/:id', async (req, res) => {
-  const { id } = req.params
-  const task = await prisma.task.delete({
-    where: {
-      id: Number(id),
-    },
-  })
-  res.json(task)
+  const dtoOut = await deleteTask(req.params)
+  res.json(dtoOut)
 })
 
-app.put('/task/:id/status/:st', async (req, res) => {
-  const { id,st } = req.params
-
-  try {
+async function updateTaskStatus(dtoIn){
+  try{
+    const { id,newStatus } = dtoIn
+    if (!id||id.length==0){
+      throw new Error("wrong id")
+    }
     const task = await prisma.task.update({
       where: { id: Number(id) },
       data: {
-        status: Number(st),
+        status: Number(newStatus),
       },
     })
-
-    res.json(task)
-  } catch (error) {
-    res.json({ "error": `Task with ID ${id} does not exist in the database` })
+    return task
+  } catch(e){
+    return {"error": e}
   }
+}
+
+app.put('/task/:id/status/:newStatus', async (req, res) => {
+  const dtoOut = await updateTaskStatus(req.params)
+  res.json(dtoOut)
 })
 
 app.listen(port, () => {
