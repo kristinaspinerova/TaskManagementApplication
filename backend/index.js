@@ -44,17 +44,38 @@ app.get('/users', async (req, res) => {
   res.json(users)
 })
 
+async function createTaskList(dtoIn){
+  try{
+    const { name, description, creationDate, userId } = dtoIn
+    if (!name||name.length==0){
+      throw new Error("wrong name")
+    }
+    if (!description||description.length==0){
+      throw new Error("wrong description")
+    }
+    if (!creationDate||creationDate.length==0){
+      throw new Error("wrong date")
+    }
+    if (!userId||!Number.isInteger(userId)){
+      throw new Error("wrong userId")
+    }
+    const result = await prisma.taskList.create({
+      data: {
+        name,
+        description,
+        creationDate,
+        userId
+      },
+    })
+    return result
+  } catch(e){
+    return {"error": e}
+  }
+}
+
 app.post(`/tasklist`, async (req, res) => {
-  const { name, description, creationDate, userId } = req.body
-  const result = await prisma.taskList.create({
-    data: {
-      name,
-      description,
-      creationDate,
-      userId
-    },
-  })
-  res.json(result)
+  const dtoOut = await createTaskList(req.body)
+  res.json(dtoOut)
 })
 
 app.get('/tasklists', async (req, res) => {
