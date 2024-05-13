@@ -9,11 +9,12 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <h1>TeamFlow - Task management application</h1>
         <Routes>
           <Route path="/" element={<ReadTaskList />} />
           <Route path="/task" element={<CreateTask />} />
           <Route path="/task/:id" element={<DeleteTask />} />
-          <Route path="/task/:id/status/:newStatus" element={<UpdateTaskStatus />} />
+          <Route path="/task/:id/status" element={<UpdateTaskStatus />} />
         </Routes>
       </header>
     </div>

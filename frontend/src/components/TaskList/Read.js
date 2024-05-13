@@ -37,6 +37,9 @@ function TaskList() {
                 ) : ( 
                     <div>
                         <h4>{tasklist.name}</h4>
+                        <Link to={`/task`}>
+                                    <i className="fa fa-plus" aria-hidden="true"></i>
+                        </Link>
                         <p>Description: {tasklist.description}</p>
                         <p>Creator: {tasklist.user?.name} {tasklist.user?.surname}</p>
                         <p>Creation date: {tasklist.creationDate?.toString()}</p>
@@ -49,6 +52,9 @@ function TaskList() {
                                 <p>Priority: {task.priority}</p>
                                 <p>Status: {task.status}</p>
                                 <Link to={`/task/${task.id}`}>
+                                    <i className="fa fa-trash" aria-hidden="true"></i>
+                                </Link>
+                                <Link to={`/task/${task.id}/status`}>
                                     <i className="fa fa-pencil" aria-hidden="true"></i>
                                 </Link>
                             </div> ))
