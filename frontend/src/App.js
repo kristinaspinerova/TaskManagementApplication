@@ -11,7 +11,7 @@ function App() {
       <header className="App-header">
         <h1>TeamFlow - Task management application</h1>
         <Routes>
-          <Route path="/" element={<ReadTaskList />} />
+          <Route path="/readtasklist/:id" element={<ReadTaskList />} />
           <Route path="/task" element={<CreateTask />} />
           <Route path="/task/:id" element={<DeleteTask />} />
           <Route path="/task/:id/status" element={<UpdateTaskStatus />} />

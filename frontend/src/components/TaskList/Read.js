@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react"; 
 import axios from "axios"; 
 import { Link } from "react-router-dom";
-  
+import { useParams } from "react-router-dom";
 function TaskList() { 
     const [loading, setLoading] = useState(false); 
     const [tasklist, setPosts] = useState([]); 
   
+    const { id } = useParams();
+
     useEffect(() => { 
         const loadPost = async () => { 
             // Till the data is fetch using API 
@@ -15,7 +17,7 @@ function TaskList() {
             // Await make wait until that 
             // promise settles and return its result 
             const response = await axios.get( 
-                "http://localhost/tasklists/1"
+                `http://localhost/tasklists/${id}`
             ); 
   
             // After fetching data stored it in posts state. 
