@@ -1,8 +1,9 @@
 const express = require('express')
 const { PrismaClient } = require('@prisma/client')
 const path = require('path');
+const cors = require('cors')
 
-const port = 80
+const port = 5000
 const prisma = new PrismaClient()
 
 async function createRole(dtoIn){
@@ -105,6 +106,19 @@ async function readTaskList(dtoIn){
   }
 }
 
+async function readTaskLists(){
+  try{
+    const taskLists = await prisma.taskList.findMany()
+    taskListNames = []
+    for (let i = 0; i < taskLists.length; i++) {
+      taskListNames.push(`${taskLists[i].id}.${taskLists[i].name}`)
+    }
+    return taskListNames
+  } catch(e){
+    return {"error": e}
+  }
+}
+
 async function createTask(dtoIn){
   try{
     const { name, description, due, priority, status, taskListId } = dtoIn
@@ -178,8 +192,8 @@ async function updateTaskStatus(dtoIn){
 }
 
 const app = express()
-app.use(express.static('../../frontend/build'));
 app.use(express.json())
+app.use(cors())
 
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', '..', 'frontend', 'build', 'index.html'));
@@ -202,6 +216,11 @@ app.post(`/tasklist`, async (req, res) => {
 
 app.get('/tasklists/:id', async (req, res) => {
   const dtoOut = await readTaskList(req.params)
+  res.json(dtoOut)
+})
+
+app.get('/tasklists', async (req, res) => {
+  const dtoOut = await readTaskLists()
   res.json(dtoOut)
 })
 

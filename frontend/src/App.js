@@ -1,24 +1,42 @@
 import './App.css';
-import ReadTaskList from './components/TaskList/Read';
-import CreateTask from './components/Task/Create';
-import DeleteTask from './components/Task/Delete';
-import UpdateTaskStatus from './components/Task/UpdateTaskStatus';
-import { Route, Routes } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, useParams } from 'react-router-dom';
+import TaskList from './TaskList';
+import TaskLists from './TaskLists';
+import Home from './Home';
+import { TaskListProvider } from './TaskListContext';
+import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>TeamFlow - Task management application</h1>
-        <Routes>
-          <Route path="/readtasklist/:id" element={<ReadTaskList />} />
-          <Route path="/task" element={<CreateTask />} />
-          <Route path="/task/:id" element={<DeleteTask />} />
-          <Route path="/task/:id/status" element={<UpdateTaskStatus />} />
-        </Routes>
-      </header>
-    </div>
+    <TaskListProvider>
+      <Router>
+        <div className="App">
+          <nav>
+            <ul>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/tasklists">Task Lists</Link>
+              </li>
+            </ul>
+          </nav>
+
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/tasklists" element={<TaskLists />} />
+            <Route path="/tasklists/:id" element={<TaskListWrapper />} />
+          </Routes>
+        </div>
+      </Router>
+    </TaskListProvider>
   );
+}
+
+function TaskListWrapper() {
+  const { id } = useParams();
+  return <TaskList id={id} />;
 }
 
 export default App;
